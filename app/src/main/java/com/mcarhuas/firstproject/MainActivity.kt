@@ -1,5 +1,6 @@
 package com.mcarhuas.firstproject
 
+import android.content.Context
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -12,8 +13,13 @@ import androidx.core.view.WindowInsetsCompat
 class MainActivity : AppCompatActivity() {
 
     private lateinit var editText: EditText
-    private lateinit var button:Button
-    private lateinit var textView:TextView
+    private lateinit var button: Button
+    private lateinit var textView: TextView
+
+    companion object {
+        private const val PREFS_NAME = "MyPrefsFile"
+        private const val TEXT_KEY = "savedText"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,9 +35,19 @@ class MainActivity : AppCompatActivity() {
         textView = findViewById(R.id.text_view_id)
         button.setOnClickListener {
             val inputText = editText.text.toString()
-            textView.text = editText.text
+            textView.text = inputText
         }
+        val settings = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val savedText = settings.getString(TEXT_KEY, "")
+        textView.text = savedText
 
-
+        button.setOnLongClickListener {
+            val inputText = editText.text.toString()
+            textView.text = inputText
+            val editor = settings.edit()
+            editor.putString(TEXT_KEY, inputText)
+            editor.apply()
+            true
+        }
     }
 }
